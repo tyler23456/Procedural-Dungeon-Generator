@@ -4,21 +4,25 @@ using UnityEngine;
 
 namespace GDA.Generators
 {
+    [System.Serializable]
     public class TileInstantiator
     {
         static List<Vector2Int> pointList = new List<Vector2Int>();
         static GameObject obj;
-        static Vector3 position = Vector3.zero;
+        static Vector3Int position;
         static int i = 0;
 
-        public void Instantiate(HashSet<Vector2Int> pointSet, List<GameObject> tiles, Transform parent, float tileLength)
+        [SerializeField] Vector3Int tileOffset;
+
+        public void Instantiate(HashSet<Vector2Int> pointSet, List<GameObject> tiles, Transform parent, int tileLength)
         {
             foreach (Vector2Int p in pointSet)
             {
                 i = Random.Range(0, tiles.Count);
 
-                position.x = p.x * tileLength;
-                position.z = p.y * tileLength;
+                position.x = (p.x + tileOffset.x) * tileLength;
+                position.y = tileOffset.y;
+                position.z = (p.y + tileOffset.z) * tileLength;
 
                 obj = GameObject.Instantiate(tiles[i], position, Quaternion.identity);
                 obj.transform.parent = parent;

@@ -10,8 +10,16 @@ namespace GDA.Generators
     {
         [SerializeField] BoundsInt mapArea = new BoundsInt(0, 0, 0, 20, 0, 20);
         [SerializeField] Vector2Int minimumRoomSize = new Vector2Int(5, 5);
-        [SerializeField] [Range(1, 1000)] int tileLength = 5;
-        [SerializeField] [Range(0, 100)] int roomOffset = 0;
+        [SerializeField] [Range(1, 100)] int tileLength = 5;
+        [SerializeField] [Range(0, 100)] int roomMinimumOffset = 0;
+        [SerializeField] [Range(0, 100)] int roomMaximumOffset = 0;
+
+        [SerializeField] int shortestSideMinimum = 2;
+        [SerializeField] int shortestSideMaximum = 2;
+        [SerializeField] int longestSideMinimum = 5;
+        [SerializeField] int longestSideMaximum = 5;
+
+
         [SerializeField] bool generate = false;
         [SerializeField] bool delete = false;
 
@@ -23,6 +31,10 @@ namespace GDA.Generators
         [SerializeField] int floorVariability = 1;
         [SerializeField] int wallVariability = 1;
         [SerializeField] int ceilingVariability = 1;
+
+        [SerializeField] TileInstantiator tileInstantiator;
+        [SerializeField] WallInstantiator wallInstantiator;
+        [SerializeField] CornerInstantiator cornerInstantiator;
 
         void Update()
         {
@@ -51,9 +63,9 @@ namespace GDA.Generators
             ThemeManager ceilingThemes = new ThemeManager();
             ThemeManager wallThemes = new ThemeManager();
 
-            TileInstantiator tileInstantiator = new TileInstantiator();
-            WallInstantiator wallInstantiator = new WallInstantiator();
-            CornerInstantiator cornerInstantiator = new CornerInstantiator();
+            //tileInstantiator = new TileInstantiator();
+            //wallInstantiator = new WallInstantiator();
+            //cornerInstantiator = new CornerInstantiator();
 
 
             GameObject[] floorPool = Resources.LoadAll<GameObject>(floorsFolder);
@@ -70,9 +82,9 @@ namespace GDA.Generators
 
 
             List<BoundsInt> rooms = binarySpacePartitioner.Generate(mapArea, minimumRoomSize.x, minimumRoomSize.y);
-            rooms = roomSizeGenerator.Generate(rooms, 2, 2, 3, 4);
+            rooms = roomSizeGenerator.Generate(rooms, shortestSideMinimum, shortestSideMaximum, longestSideMinimum, longestSideMaximum);
 
-            List<HashSet<Vector2Int>> roomSetList = boundsToPositionConverter.Generate(rooms, roomOffset);
+            List<HashSet<Vector2Int>> roomSetList = boundsToPositionConverter.Generate(rooms, roomMinimumOffset, roomMaximumOffset);
             HashSet<Vector2Int> roomSet = new HashSet<Vector2Int>();
             roomSetList.ForEach((i) => roomSet.UnionWith(i));
 
