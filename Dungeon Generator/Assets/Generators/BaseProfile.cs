@@ -8,7 +8,7 @@ namespace GDA.Generators
     [ExecuteInEditMode]
     public class BaseProfile : MonoBehaviour
     {
-        [SerializeField] BoundsInt mapArea = new BoundsInt(0, 0, 0, 20, 0, 20);
+        [SerializeField] BoundsInt mapArea = new BoundsInt(0, 0, 0, 40, 0, 40);
         [SerializeField] Vector2Int minimumRoomSize = new Vector2Int(5, 5);
         [SerializeField] [Range(1, 100)] int tileLength = 5;
         [SerializeField] [Range(0, 100)] int roomMinimumOffset = 0;
@@ -22,6 +22,8 @@ namespace GDA.Generators
 
         [SerializeField] bool generate = false;
         [SerializeField] bool delete = false;
+
+        [SerializeField] bool wallsOccupyCorners = false;
 
         [SerializeField] string floorsFolder = "Floors";
         [SerializeField] string ceilingsFolder = "Ceilings";
@@ -93,21 +95,23 @@ namespace GDA.Generators
             HashSet<Vector2Int> overlapSet = roomSet.Intersect(corridorSet).ToHashSet();
             HashSet<Vector2Int> corridorOnlySet = corridorSet.Except(roomSet).ToHashSet();
             HashSet<Vector2Int> floorSet = roomSet.Union(corridorSet).ToHashSet();
+            HashSet<Vector2Int> cornerSet = new HashSet<Vector2Int>();
 
             List<HashSet<Vector2Int>> roomOnlySetList = new List<HashSet<Vector2Int>>();
             roomSetList.ForEach((i) => roomOnlySetList.Add(new HashSet<Vector2Int>(i)));
             roomOnlySetList.ForEach((i) => i.ExceptWith(corridorSet));
 
-
+            
             roomSetList.ForEach((i) => tileInstantiator.Instantiate(i, floorThemes.Next(floorVariability), transform, tileLength));
-            roomSetList.ForEach((i) => tileInstantiator.Instantiate(i, ceilingThemes.Next(ceilingVariability), transform, tileLength));           
-            roomSetList.ForEach((i) => wallInstantiator.Instantiate(i, floorSet, wallThemes.Next(wallVariability), wallThemes.Next(wallVariability), transform, tileLength));
-            roomSetList.ForEach((i) => cornerInstantiator.Instantiate(i, floorSet, corners[0], transform, tileLength));
+            roomSetList.ForEach((i) => tileInstantiator.Instantiate(i, ceilingThemes.Next(ceilingVariability), transform, tileLength));
+            roomSetList.ForEach((i) => cornerInstantiator.Instantiate(i, floorSet, cornerSet, corners[0], transform, tileLength));
+            roomSetList.ForEach((i) => wallInstantiator.Instantiate(i, floorSet, cornerSet, wallsOccupyCorners, wallThemes.Next(wallVariability), wallThemes.Next(wallVariability), transform, tileLength));
+            
 
             tileInstantiator.Instantiate(corridorOnlySet, floorThemes.Next(floorVariability), transform, tileLength);
             tileInstantiator.Instantiate(corridorOnlySet, ceilingThemes.Next(ceilingVariability), transform, tileLength);
-            wallInstantiator.Instantiate(corridorOnlySet, floorSet, wallThemes.Next(wallVariability), wallThemes.Next(wallVariability), transform, tileLength);
-            cornerInstantiator.Instantiate(corridorOnlySet, floorSet, corners[0], transform, tileLength);
+            cornerInstantiator.Instantiate(corridorOnlySet, floorSet, cornerSet, corners[0], transform, tileLength);
+            wallInstantiator.Instantiate(corridorOnlySet, floorSet, cornerSet, wallsOccupyCorners, wallThemes.Next(wallVariability), wallThemes.Next(wallVariability), transform, tileLength);
         }
     }
 }

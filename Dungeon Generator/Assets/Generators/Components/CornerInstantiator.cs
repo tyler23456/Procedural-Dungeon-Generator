@@ -16,15 +16,15 @@ namespace GDA.Generators
         [SerializeField] Vector3Int backLeftCornersOffset = new Vector3Int(-1, 0, 0);
         [SerializeField] Vector3Int backRightCornersOffset = new Vector3Int(0, 0, 0);
 
-        public void Instantiate(HashSet<Vector2Int> room, HashSet<Vector2Int> floorSet, GameObject corner, Transform parent, float tileLength)
+        public void Instantiate(HashSet<Vector2Int> room, HashSet<Vector2Int> floorSet, HashSet<Vector2Int> cornerSet, GameObject corner, Transform parent, float tileLength)
         {
             foreach (Vector2Int p in room)
             {
-                Instantiate(p, floorSet, corner, parent, tileLength);
+                Instantiate(p, floorSet, cornerSet, corner, parent, tileLength);
             }
         }
 
-        void Instantiate(Vector2Int p, HashSet<Vector2Int> floorSet, GameObject corner, Transform parent, float tileLength)
+        void Instantiate(Vector2Int p, HashSet<Vector2Int> floorSet, HashSet<Vector2Int> cornerSet, GameObject corner, Transform parent, float tileLength)
         {
             if (!floorSet.Contains(p + Vector2Int.up) && !floorSet.Contains(p + Vector2Int.left)
                 || floorSet.Contains(p + Vector2Int.up) && floorSet.Contains(p + Vector2Int.left) && !floorSet.Contains(p + Vector2Int.up + Vector2Int.left))
@@ -33,6 +33,7 @@ namespace GDA.Generators
                 rotation = Quaternion.Euler(new Vector3(0f, 180f, 0f));
                 obj = GameObject.Instantiate(corner, position, rotation, null);
                 obj.transform.parent = parent;
+                cornerSet.Add(p);
             }
             if (!floorSet.Contains(p + Vector2Int.up) && !floorSet.Contains(p + Vector2Int.right)
                 || floorSet.Contains(p + Vector2Int.up) && floorSet.Contains(p + Vector2Int.right) && !floorSet.Contains(p + Vector2Int.up + Vector2Int.right))
@@ -41,6 +42,7 @@ namespace GDA.Generators
                 rotation = Quaternion.Euler(new Vector3(0f, 270f, 0f));
                 obj = GameObject.Instantiate(corner, position, rotation, null);
                 obj.transform.parent = parent;
+                cornerSet.Add(p);
             }
             if (!floorSet.Contains(p + Vector2Int.down) && !floorSet.Contains(p + Vector2Int.left)
                 || floorSet.Contains(p + Vector2Int.down) && floorSet.Contains(p + Vector2Int.left) && !floorSet.Contains(p + Vector2Int.down + Vector2Int.left))
@@ -49,6 +51,7 @@ namespace GDA.Generators
                 rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
                 obj = GameObject.Instantiate(corner, position, rotation, null);
                 obj.transform.parent = parent;
+                cornerSet.Add(p);
             }
             if (!floorSet.Contains(p + Vector2Int.down) && !floorSet.Contains(p + Vector2Int.right)
                 || floorSet.Contains(p + Vector2Int.down) && floorSet.Contains(p + Vector2Int.right) && !floorSet.Contains(p + Vector2Int.down + Vector2Int.right))
@@ -57,6 +60,7 @@ namespace GDA.Generators
                 rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
                 obj = GameObject.Instantiate(corner, position, rotation, null);
                 obj.transform.parent = parent;
+                cornerSet.Add(p);
             }      
         }
     }

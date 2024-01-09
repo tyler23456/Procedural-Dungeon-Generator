@@ -23,10 +23,13 @@ namespace GDA.Generators
         [SerializeField] Vector3Int leftWallsOffset = new Vector3Int(-1, 0, 0);
         [SerializeField] Vector3Int rightWallsOffset = new Vector3Int(0, 0, 1);
 
-        public void Instantiate(HashSet<Vector2Int> pointSet, HashSet<Vector2Int> floorSet, List<GameObject> walls, List<GameObject> wallProps, Transform parent, float tileLength)
+        public void Instantiate(HashSet<Vector2Int> pointSet, HashSet<Vector2Int> floorSet, HashSet<Vector2Int> cornerSet, bool wallsOccupyCorners, List<GameObject> walls, List<GameObject> wallProps, Transform parent, float tileLength)
         {
             foreach (Vector2Int p in pointSet)
             {
+                if (!wallsOccupyCorners && cornerSet.Contains(p))
+                    continue;
+
                 if (!floorSet.Contains(p + up))
                 {
                     position = (new Vector3(p.x, 0f, p.y) + forwardWallsOffset) * tileLength;
