@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace GDA.Generators
 {
-    [System.Serializable]
     public class TileInstantiator
     {
         static List<Vector2Int> pointList = new List<Vector2Int>();
@@ -12,17 +11,15 @@ namespace GDA.Generators
         static Vector3Int position;
         static int i = 0;
 
-        [SerializeField] Vector3Int tileOffset;
-
-        public void Instantiate(HashSet<Vector2Int> pointSet, List<GameObject> tiles, Transform parent, int tileLength)
+        public void Instantiate(HashSet<Vector2Int> pointSet, List<GameObject> tiles, Transform parent, int tileLength, Vector3Int offset)
         {
             foreach (Vector2Int p in pointSet)
             {
                 i = Random.Range(0, tiles.Count);
 
-                position.x = (p.x + tileOffset.x) * tileLength;
-                position.y = tileOffset.y;
-                position.z = (p.y + tileOffset.z) * tileLength;
+                position.x = (p.x + offset.x) * tileLength;
+                position.y = offset.y;
+                position.z = (p.y + offset.z) * tileLength;
 
                 obj = GameObject.Instantiate(tiles[i], position, Quaternion.identity);
                 obj.transform.parent = parent;

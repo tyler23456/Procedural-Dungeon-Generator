@@ -19,22 +19,27 @@ namespace GDA.Generators
         [SerializeField] int longestSideMinimum = 5;
         [SerializeField] int longestSideMaximum = 5;
 
-
+        [Space(10)]
         [SerializeField] bool generate = false;
         [SerializeField] bool delete = false;
 
         [SerializeField] bool wallsOccupyCorners = false;
 
+        [Space(10)]
         [SerializeField] string floorsFolder = "Floors";
         [SerializeField] string ceilingsFolder = "Ceilings";
         [SerializeField] string wallsFolder = "Walls";
         [SerializeField] string cornerPillarsFolder = "Corners";
 
+        [Space(10)]
         [SerializeField] int floorVariability = 1;
         [SerializeField] int wallVariability = 1;
         [SerializeField] int ceilingVariability = 1;
 
-        [SerializeField] TileInstantiator tileInstantiator;
+        [Space(10)]
+        [SerializeField] Vector3Int floorOffset;
+        [SerializeField] Vector3Int ceilingOffset;
+        TileInstantiator tileInstantiator;
         [SerializeField] WallInstantiator wallInstantiator;
         [SerializeField] CornerInstantiator cornerInstantiator;
 
@@ -102,14 +107,14 @@ namespace GDA.Generators
             roomOnlySetList.ForEach((i) => i.ExceptWith(corridorSet));
 
             
-            roomSetList.ForEach((i) => tileInstantiator.Instantiate(i, floorThemes.Next(floorVariability), transform, tileLength));
-            roomSetList.ForEach((i) => tileInstantiator.Instantiate(i, ceilingThemes.Next(ceilingVariability), transform, tileLength));
+            roomSetList.ForEach((i) => tileInstantiator.Instantiate(i, floorThemes.Next(floorVariability), transform, tileLength, floorOffset));
+            roomSetList.ForEach((i) => tileInstantiator.Instantiate(i, ceilingThemes.Next(ceilingVariability), transform, tileLength, ceilingOffset));
             roomSetList.ForEach((i) => cornerInstantiator.Instantiate(i, floorSet, cornerSet, corners[0], transform, tileLength));
             roomSetList.ForEach((i) => wallInstantiator.Instantiate(i, floorSet, cornerSet, wallsOccupyCorners, wallThemes.Next(wallVariability), wallThemes.Next(wallVariability), transform, tileLength));
             
 
-            tileInstantiator.Instantiate(corridorOnlySet, floorThemes.Next(floorVariability), transform, tileLength);
-            tileInstantiator.Instantiate(corridorOnlySet, ceilingThemes.Next(ceilingVariability), transform, tileLength);
+            tileInstantiator.Instantiate(corridorOnlySet, floorThemes.Next(floorVariability), transform, tileLength, floorOffset);
+            tileInstantiator.Instantiate(corridorOnlySet, ceilingThemes.Next(ceilingVariability), transform, tileLength, ceilingOffset);
             cornerInstantiator.Instantiate(corridorOnlySet, floorSet, cornerSet, corners[0], transform, tileLength);
             wallInstantiator.Instantiate(corridorOnlySet, floorSet, cornerSet, wallsOccupyCorners, wallThemes.Next(wallVariability), wallThemes.Next(wallVariability), transform, tileLength);
         }
